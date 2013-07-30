@@ -44,7 +44,7 @@ class Admin::Blog::TagsController < Admin::Blog::BaseController
 protected
   
   def build_tag
-    @tag = Blog::Tag.new(params[:tag])
+    @tag = Blog::Tag.new(tag_params)
   end
   
   def load_tag
@@ -52,5 +52,10 @@ protected
   rescue ActiveRecord::RecordNotFound
     flash[:error] = 'Blog Tag not found'
     redirect_to :action => :index  
+  end
+  
+  private
+  def tag_params
+    params.require(:tag).permit(:name, :is_category)
   end
 end

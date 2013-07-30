@@ -57,7 +57,14 @@ protected
   end
   
   def build_post
-    @post = Blog::Post.new(params[:post])
+    @post = Blog::Post.new(post_params)
+  end
+  
+  private
+  def post_params
+    params.require(:post).permit(:title, :slug, :author,
+      :tag_names, :excerpt, :content,
+      :published_at, :is_published, :category_ids)
   end
   
 end
