@@ -7,3 +7,4 @@ tmp/
 pkg/
 Gemfile.lock
 .bash_profile
+/nbproject/private/

@@ -2,7 +2,7 @@ class Blog::Comment < ActiveRecord::Base
   
   self.table_name = :blog_comments
   
-  attr_accessible :author,
+  attr_accessor :author,
                   :email,
                   :content
   
