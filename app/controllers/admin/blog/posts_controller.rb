@@ -62,7 +62,7 @@ protected
   
   private
   def post_params
-    params.permit(:post=>[:title, :slug, :author,
+    params.permit(post: [:title, :slug, :author,
       :tag_names, :excerpt, :content, :published_at, :is_published, :category_ids])
   end
 end
