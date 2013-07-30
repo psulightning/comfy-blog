@@ -1,12 +1,10 @@
 class Blog::Post < ActiveRecord::Base
 
-  attr_accessor :title, :slug, :author, :tag_names, :excerpt, :content, :published_at, :is_published, :category_ids
-
   self.table_name = :blog_posts
 
   # -- Attributes -----------------------------------------------------------
-  attr_accessor :tag_names,
-                :category_ids
+  attr_accessor :title, :slug, :author, :tag_names, :excerpt, :content, :published_at, :is_published, :category_ids
+  
   
   # -- Relationships --------------------------------------------------------
   has_many :comments, :dependent => :destroy

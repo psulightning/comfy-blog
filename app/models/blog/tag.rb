@@ -18,7 +18,7 @@ class Blog::Tag < ActiveRecord::Base
   scope :categories,  where(:is_category => true)
   scope :tags,        where(:is_category => false)
   
-protected
+  protected
   
   def strip_name
     self.name = self.name.strip if self.name

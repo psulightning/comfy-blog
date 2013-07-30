@@ -16,7 +16,7 @@ class Blog::Comment < ActiveRecord::Base
   validates :post_id, :content, :author, :email, 
     :presence => true
   validates :email,
-    :format => { :with => /^([\w.%-+]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i }
+    :format => { :with => /\A([\w.%-+]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, :multiline=>true }
     
   # -- Scopes ---------------------------------------------------------------
   scope :published, where(:is_published => true)

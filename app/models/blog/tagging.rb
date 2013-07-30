@@ -15,7 +15,7 @@ class Blog::Tagging < ActiveRecord::Base
   scope :for_tags,        includes(:tag).where('blog_tags.is_category' => false)
   scope :for_categories,  includes(:tag).where('blog_tags.is_category' => true)
   
-protected
+  protected
   
   def destroy_tag
     self.tag.destroy if !self.tag.is_category? && self.tag.taggings.count == 0
