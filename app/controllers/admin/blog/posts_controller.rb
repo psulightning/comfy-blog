@@ -47,7 +47,7 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
     redirect_to :action => :index
   end
   
-protected
+  protected
   
   def load_post
     @post = Blog::Post.find(params[:id])
@@ -57,12 +57,17 @@ protected
   end
   
   def build_post
-    @post = Blog::Post.new(post_params)
+    @post = if params[:post]
+      Blog::Post.new(post_params)
+    else
+      Blog::Post.new
+    end
   end
   
   private
   def post_params
-    params.permit(post: [:title, :slug, :author,
-      :tag_names, :excerpt, :content, :published_at, :is_published, :category_ids])
+    params.require(:post).permit(:title, :slug, :author,
+      :tag_names, :excerpt, :content,
+      :published_at, :is_published, :category_ids)
   end
 end
