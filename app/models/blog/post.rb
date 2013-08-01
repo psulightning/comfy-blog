@@ -1,6 +1,10 @@
 class Blog::Post < ActiveRecord::Base
 
   self.table_name = :blog_posts
+
+  # -- Attributes -----------------------------------------------------------
+  attr_accessor :tag_names,
+                :category_ids
   
   
   # -- Relationships --------------------------------------------------------
