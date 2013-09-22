@@ -32,7 +32,7 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
   end
   
   def update
-    @post.update_attributes!(params[:post])
+    @post.update_attributes!(post_params)
     flash[:notice] = 'Blog Post updated'
     redirect_to :action => :edit, :id => @post
     
@@ -66,8 +66,12 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
   
   private
   def post_params
-    params.require(:post).permit(:title, :slug, :author,
-      :tag_names, :excerpt, :content,
-      :published_at, :is_published, :category_ids)
+    if params[:post]
+      params.require(:post).permit(:title, :slug, :author,
+        :tag_names, :excerpt, :content,
+        :published_at, :is_published, :category_ids)
+    else
+      {}
+    end
   end
 end

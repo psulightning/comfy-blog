@@ -1,7 +1,5 @@
 class Blog::Tag < ActiveRecord::Base
 
-  attr_accessor :name, :is_category
-
   self.table_name = :blog_tags
 
   # -- Relationships --------------------------------------------------------

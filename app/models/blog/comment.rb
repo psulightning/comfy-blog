@@ -2,10 +2,6 @@ class Blog::Comment < ActiveRecord::Base
   
   self.table_name = :blog_comments
   
-  attr_accessor :author,
-                  :email,
-                  :content
-  
   # -- Relationships --------------------------------------------------------
   belongs_to :post
   

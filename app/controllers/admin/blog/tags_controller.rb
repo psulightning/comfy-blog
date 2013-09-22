@@ -41,7 +41,7 @@ class Admin::Blog::TagsController < Admin::Blog::BaseController
     redirect_to :action => :index
   end
 
-protected
+  protected
   
   def build_tag
     @tag = Blog::Tag.new(tag_params)
@@ -56,6 +56,10 @@ protected
   
   private
   def tag_params
-    params.require(:tag).permit(:name, :is_category)
+    if params[:tag]
+      params.require(:tag).permit(:name, :is_category)
+    else
+      {}
+    end
   end
 end
