@@ -16,7 +16,7 @@ class Admin::Blog::TagsController < Admin::Blog::BaseController
   end
   
   def update
-    @tag.update_attributes!(params[:tag])
+    @tag.update_attributes!(tags_params)
     flash[:notice] = 'Blog Tag updated'
     redirect_to :action => :index
     

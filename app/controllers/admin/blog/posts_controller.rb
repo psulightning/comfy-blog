@@ -57,19 +57,16 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
   end
   
   def build_post
-    @post = if params[:post]
-      Blog::Post.new(post_params)
-    else
-      Blog::Post.new
-    end
+    @post = Blog::Post.new(post_params)
   end
   
   private
   def post_params
     if params[:post]
+      hash = Hash[params[:post][:tag_names]].merge(Hash[params[:post][:category_ids]])
       params.require(:post).permit(:title, :slug, :author,
-        :tag_names, :excerpt, :content,
-        :published_at, :is_published, :category_ids)
+        :excerpt, :content,
+        :published_at, :is_published).merge(hash)
     else
       {}
     end
