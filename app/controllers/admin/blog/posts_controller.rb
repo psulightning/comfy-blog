@@ -63,7 +63,7 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
   private
   def post_params
     if params[:post]
-      hash = Hash[params[:post][:tag_names]].merge(Hash[params[:post][:category_ids]])
+      hash = {post: {tag_names: params[:post][:tag_names], category_ids: params[:post][:category_ids]}}
       params.require(:post).permit(:title, :slug, :author,
         :excerpt, :content,
         :published_at, :is_published).merge(hash)
