@@ -1,7 +1,5 @@
 class Blog::Tagging < ActiveRecord::Base
 
-  attr_accessor :post
-
   self.table_name = :blog_taggings
   
   # -- Relationships --------------------------------------------------------
@@ -12,8 +10,8 @@ class Blog::Tagging < ActiveRecord::Base
   after_destroy :destroy_tag
   
   # -- Scopes ---------------------------------------------------------------
-  scope :for_tags,        includes(:tag).where('blog_tags.is_category' => false)
-  scope :for_categories,  includes(:tag).where('blog_tags.is_category' => true)
+  scope :for_tags,  lambda{includes(:tag).where('blog_tags.is_category' => false)}
+  scope :for_categories,  lambda{includes(:tag).where('blog_tags.is_category' => true)}
   
   protected
   

@@ -3,16 +3,16 @@ class Blog::Post < ActiveRecord::Base
   self.table_name = :blog_posts
   
   # -- Attributes -----------------------------------------------------------
-  attr_accessor :tag_names,
-                :category_ids
+  attr_accessor :tag_names, :category_ids
   
   # -- Relationships --------------------------------------------------------
   has_many :comments, :dependent => :destroy
   has_many :taggings, :dependent => :destroy
   has_many :tags, :through => :taggings
+  belongs_to :author, class_name: "User"
   
   # -- Validations ----------------------------------------------------------
-  validates :title, :slug, :year, :month, :content,
+  validates :title, :slug, :year, :month, :content, :author_id,
     :presence   => true
   validates :slug,
     :uniqueness => { :scope => [:year, :month] }
@@ -21,17 +21,16 @@ class Blog::Post < ActiveRecord::Base
   default_scope {order('published_at DESC')}
   
   scope :published, lambda {where(:is_published => true)}
-  scope :for_year, lambda { |year| 
-    where(:year => year) 
-  }
-  scope :for_month, lambda { |month|
-    where(:month => month)
-  }
+  scope :for_year, lambda { |year| where(:year => year) }
+  scope :for_month, lambda { |month| where(:month => month)}
   scope :tagged_with, lambda { |tag|
     joins(:tags).where('blog_tags.name' => tag, 'blog_tags.is_category' => false)
   }
   scope :categorized_as, lambda { |tag|
     joins(:tags).where('blog_tags.name' => tag, 'blog_tags.is_category' => true)
+  }
+  scope :not_categorized_as, lambda{|tag|
+    joins(:tags).where("blog_tags.name != \"#{tag}\" and blog_tags.is_category = true")
   }
   
   # -- Callbacks ------------------------------------------------------------
@@ -75,6 +74,7 @@ protected
   end
   
   def sync_categories
+    byebug
     self.category_ids.each do |category_id, flag|
       case flag.to_i
       when 1

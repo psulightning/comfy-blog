@@ -13,8 +13,8 @@ class Blog::Tag < ActiveRecord::Base
   before_validation :strip_name
   
   # -- Scopes ---------------------------------------------------------------
-  scope :categories,  where(:is_category => true)
-  scope :tags,        where(:is_category => false)
+  scope :categories,  lambda{where(:is_category => true)}
+  scope :tags,        lambda{where(:is_category => false)}
   
   protected
   

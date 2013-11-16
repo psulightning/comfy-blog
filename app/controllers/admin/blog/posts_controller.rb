@@ -32,7 +32,9 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
   end
   
   def update
-    @post.update_attributes!(post_params)
+    @post.category_ids = params[:post].delete(:category_ids)
+    @post.tag_names = params[:post].delete(:tag_names)
+    @post.update_attributes(post_params)
     flash[:notice] = 'Blog Post updated'
     redirect_to :action => :edit, :id => @post
     
@@ -58,15 +60,17 @@ class Admin::Blog::PostsController < Admin::Blog::BaseController
   
   def build_post
     @post = Blog::Post.new(post_params)
+    if params[:post]
+      @post.tag_names = params[:post][:tag_names]
+      @post.category_ids=params[:post][:category_ids]
+    end
   end
   
   private
   def post_params
     if params[:post]
-      hash = Hash[tag_names: params[:post][:tag_names], category_ids: params[:post][:category_ids]]
-      params.require(:post).permit(:title, :slug, :author,
-        :excerpt, :content,
-        :published_at, :is_published).merge(hash)
+      params.require(:post).permit(:title, :slug, :author_id,
+        :excerpt, :content, :published_at, :is_published)
     else
       {}
     end

@@ -1,6 +1,6 @@
 <%= form.text_field :title, :id => (@post.new_record?? 'slugify' : nil) %>
 <%= form.text_field :slug, :id => 'slug' %>
-<%= form.text_field :author %>
+<%= hidden_field_tag :author_id, current_user.id, :name=>"post[author_id]" %>
 <% if Blog::Tag.categories.present? %>
   <%= form.simple_field 'Categories' do %>
     <% Blog::Tag.categories.each do |category| %>
@@ -19,7 +19,7 @@
 
 <% if defined?(ComfortableMexicanSofa) %>
   <% content_for :right_column do %>
-    <%= render :partial => 'cms_admin/files/index' %>
+    <%= render :partial => 'admin/cms/files/index' %>
   <% end %>
   
   <%= cms_hook :blog_post, :locals => { :form => form } %>
