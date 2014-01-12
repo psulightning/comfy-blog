@@ -1,12 +1,12 @@
 class Blog::Comment < ActiveRecord::Base
   
-  self.table_name = :blog_comments
+  self.table_name = 'blog_comments'
   
   # -- Relationships --------------------------------------------------------
   belongs_to :post
   belongs_to :author, class_name: "User"
   # -- Callbacks ------------------------------------------------------------
-  before_create :set_publish
+  before_create :set_is_published
     
   # -- Validations ----------------------------------------------------------
   validates :post_id, :content, :author_id, :presence => true
@@ -20,7 +20,7 @@ class Blog::Comment < ActiveRecord::Base
   
 protected
   
-  def set_publish
+  def set_is_published
     self.is_published = ComfyBlog.config.auto_publish_comments
     return
   end

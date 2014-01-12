@@ -1,31 +1,27 @@
-# Loading engine only if this is not a standalone installation
-unless defined? ComfyBlog::Application
-  require File.expand_path('comfy_blog/engine', File.dirname(__FILE__))
-end
-
-[ 'comfy_blog/core_ext/string',
-  'comfy_blog/configuration',
-  'comfy_blog/routing',
-  'comfy_blog/form_builder'
-].each do |path|
-  require File.expand_path(path, File.dirname(__FILE__))
-end
+require_relative 'comfy_blog/version'
+require_relative 'comfy_blog/engine'
+require_relative 'comfy_blog/configuration'
+require_relative 'comfy_blog/routing'
 
 module ComfyBlog
+  
   class << self
     
+    # Modify Blog configuration
+    # Example:
+    #   ComfyBlog.configure do |config|
+    #     config.posts_per_page = 5
+    #   end
     def configure
       yield configuration
     end
     
+    # Accessor for ComfyBlog::Configuration
     def configuration
-      @configuration ||= Configuration.new
+      @configuration ||= ComfyBlog::Configuration.new
     end
     alias :config :configuration
     
-    def disqus_enabled?
-      self.config.disqus_shortname.present?
-    end
-    
   end
+  
 end

@@ -1,46 +1,53 @@
-class Blog::PostsController < ApplicationController
+class Blog::PostsController < Blog::BaseController
   
-  layout ComfyBlog.config.public_layout
-  
-  def index
-    scope = if params[:tag]
-      Blog::Post.published.tagged_with(params[:tag])
-    elsif params[:category]
-      Blog::Post.published.categorized_as(params[:category])
-    elsif params[:year]
-      scope = Blog::Post.published.for_year(params[:year])
-      params[:month] ? scope.for_month(params[:month]) : scope
-    else
-      Blog::Post.published
+  skip_before_action :load_blog, :only => [:serve]
+  helper 'blog/posts'
+  # due to fancy routing it's hard to say if we need show or index
+  # action. let's figure it out here.
+  def serve
+    # if there are more than one blog, blog_path is expected
+    if @cms_site.blogs.count >= 2 
+      params[:blog_path] = params.delete(:slug) if params[:blog_path].blank?
     end
     
-    respond_to do |f|
-      f.html do
-        @posts = if defined? WillPaginate
-          scope.paginate :per_page => ComfyBlog.config.posts_per_page, :page => params[:page]
-        elsif defined? Kaminari
-          scope.page(params[:page]).per(ComfyBlog.config.posts_per_page)
-        else
-          scope
-        end
+    load_blog
+    
+    if params[:slug].present?
+      show && render(:show)
+    else
+      index && render(:index)
+    end
+  end
+
+  def index
+    scope = if params[:year]
+      scope = @blog.posts.published.for_year(params[:year])
+      params[:month] ? scope.for_month(params[:month]) : scope
+    else
+      @blog.posts.published
+    end
+
+    limit = ComfyBlog.config.posts_per_page
+    respond_to do |format|
+      format.html do
+        @posts = scope.page(params[:page]).per(limit)
       end
-      f.rss do
-        @posts = scope.limit(ComfyBlog.config.posts_per_page)
+      format.rss do
+        @posts = scope.limit(limit)
       end
     end
   end
   
   def show
     @post = if params[:slug] && params[:year] && params[:month]
-      Blog::Post.published.find_by_year_and_month_and_slug!(params[:year], params[:month], params[:slug])
+      @blog.posts.published.where(:year => params[:year], :month => params[:month], :slug => params[:slug]).first!
     else
-      Blog::Post.published.find(params[:id])
+      @blog.posts.published.where(:slug => params[:slug]).first!
     end
+    @comment = Blog::Comment.new
+
   rescue ActiveRecord::RecordNotFound
-    if defined? ComfortableMexicanSofa
-      render :cms_page => '/404', :status => 404
-    else
-      render :text => 'Post not found', :status => 404
-    end
+    render :cms_page => '/404', :status => 404
   end
+
 end

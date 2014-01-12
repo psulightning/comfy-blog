@@ -1,35 +1,33 @@
 class Admin::Blog::CommentsController < Admin::Blog::BaseController
-  require "rails_autolink/helpers"
-
-  before_filter :load_post,     :only => [:index]
-  before_filter :load_comment,  :only => [:destroy, :publish]
+  
+  before_action :load_blog
+  before_action :load_comment, :only => [:destroy, :toggle_publish]
   
   def index
-    @comments = @post ? @post.comments : Blog::Comment.all
+    @comments = if @post = @blog.posts.where(:id => params[:post_id]).first
+      @post.comments.page(params[:page])
+    else
+      @blog.comments.page(params[:page])
+    end
   end
-  
+
   def destroy
     @comment.destroy
-  end
-  
-  def publish
-    @comment.update_attribute(:is_published, true)
-  end
-  
-protected
-  
-  def load_post
-    return unless params[:post_id]
-    @post = Blog::Post.find(params[:post_id])
-  rescue ActiveRecord::RecordNotFound
-    flash[:error] = 'Blog Post not found'
+    flash[:success] = 'Comment deleted'
     redirect_to :action => :index
   end
   
+  def toggle_publish
+    @comment.update_attribute(:is_published, !@comment.is_published?)
+  end
+
+protected
+  
   def load_comment
-    @comment = Blog::Comment.find(params[:id])
+    @comment = @blog.comments.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    # ... do nothing
+    flash[:error] = 'Comment not found'
+    redirect_to :action => :index
   end
   
 end

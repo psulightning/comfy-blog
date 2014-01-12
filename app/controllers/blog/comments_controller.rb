@@ -1,36 +1,34 @@
-class Blog::CommentsController < ApplicationController
+class Blog::CommentsController < Blog::BaseController
+  
+  before_action :load_post,
+                :build_comment
   
   def create
-    @post = Blog::Post.published.find(params[:post_id])
-    @comment = @post.comments.new(comment_params)
-    @comment.save
+    @comment.save!
     
-    respond_to do |f|
-      f.html do 
-        flash[:notice] = 'Comment created'
-        redirect_to dated_blog_post_path(@post.year, @post.month, @post.slug)
-      end
-      f.js
-    end
-    
-  rescue ActiveRecord::RecordNotFound
-    respond_to do |f|
-      f.html do
-        flash[:error] = 'Blog Post not found'
-        redirect_to blog_posts_path
-      end
-      f.js do
-        render :nothing => true, :status => 404
-      end
-    end
+    flash[:success] = 'Comment added'
+    redirect_to blog_post_path(@cms_site.path, @blog.path, @post.slug)
     
   rescue ActiveRecord::RecordInvalid
-    respond_to do |f|
-      f.html do
-        render 'blog/posts/show'
-      end
-      f.js
-    end
+    flash[:error] = 'Failed to add comment'
+    render 'blog/posts/show'
+  end
+
+protected
+
+  def load_post
+    @post = @blog.posts.published.where(:slug => params[:slug]).first!
+  rescue ActiveRecord::RecordNotFound
+    flash[:error] = 'Blog Post not found'
+    redirect_to blog_posts_path(@cms_site.path, @blog.path)
+  end
+  
+  def build_comment
+    @comment = @post.comments.new(comment_params)
+  end
+
+  def comment_params
+    params.fetch(:comment, {}).permit(:author, :email, :content)
   end
   
   private

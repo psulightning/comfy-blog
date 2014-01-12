@@ -1,18 +1,24 @@
-require 'comfy_blog'
+require 'rubygems'
 require 'rails'
+require 'comfortable_mexican_sofa'
+require 'comfy_blog'
 
 module ComfyBlog
-  class Engine < Rails::Engine
+  
+  module CmsSiteExtensions
+    extend ActiveSupport::Concern
+    included do 
+      has_many :blogs,
+        :class_name => 'Blog::Blog',
+        :dependent  => :destroy
+    end
+  end
+  
+  class Engine < ::Rails::Engine
     initializer 'comfy_blog.configuration' do |app|
-      if defined?(ComfortableMexicanSofa)
-        # Applying configuraion
-        ComfyBlog.configure do |conf|
-          conf.admin_route_prefix = "cms-admin" # ComfortableMexicanSofa.config.admin_route_prefix
-          conf.admin_controller = 'Admin::Cms::BaseController'
-          conf.form_builder = 'ComfortableMexicanSofa::FormBuilder'
-        end
-        # Adding view hooks
-        ComfortableMexicanSofa::ViewHooks.add(:navigation, '/admin/blog/navigation')
+      ComfortableMexicanSofa::ViewHooks.add(:navigation, '/admin/blog/partials/navigation')
+      config.to_prepare do
+        Cms::Site.send :include, ComfyBlog::CmsSiteExtensions
       end
     end
   end

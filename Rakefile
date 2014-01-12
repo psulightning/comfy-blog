@@ -1,21 +1,24 @@
-require File.expand_path('../config/application', __FILE__)
-require 'rubygems'
-require 'rake'
+require_relative 'config/application'
 
 ComfyBlog::Application.load_tasks
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name        = 'comfy_blog'
-    gem.homepage    = 'http://github.com/comfy/comfy-blog'
-    gem.license     = 'MIT'
-    gem.summary     = 'ComfyBlog is a blog engine for Rails 3.1 apps (and ComfortableMexicanSofa)'
-    gem.description = ''
-    gem.email       = 'oleg@twg.ca'
-    gem.authors     = ['Oleg Khabarov', 'The Working Group Inc.']
+namespace :test do
+  
+  Rake::TestTask.new(:lib) do |t|
+    t.libs << 'test'
+    t.pattern = 'test/lib/**/*_test.rb'
+    t.verbose = true
   end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+  
+  Rake::TestTask.new(:generators) do |t|
+    t.libs << 'test'
+    t.pattern = 'test/generators/**/*_test.rb'
+    t.verbose = true
+  end
+  
+end
+
+Rake::Task[:test].enhance do
+  Rake::Task['test:lib'].invoke
+  Rake::Task['test:generators'].invoke
 end

@@ -1,3 +1,15 @@
-defined?(ComfyBlog::Application) && ComfyBlog::Application.configure do
-  ComfyBlog::Application.config.secret_token = '94912d70cb360269d219fb540683d0d10598be330314d01d7718f9802780cb06c74a1ab1e2e5224f25282783d14160c602eab793f88daa0f8cc246e6ed599cc8'
+# Be sure to restart your server when you modify this file.
+
+# Your secret key for verifying the integrity of signed cookies.
+# If you change this key, all old signed cookies will become invalid!
+
+# Make sure the secret is at least 30 characters and all random,
+# no regular words or you'll be exposed to dictionary attacks.
+# You can use `rake secret` to generate a secure secret key.
+
+# Make sure your secret_key_base is kept private
+# if you're sharing your code publicly.
+
+if defined?(ComfyBlog::Application)
+  ComfyBlog::Application.config.secret_key_base = 'supersecrettoken'
 end

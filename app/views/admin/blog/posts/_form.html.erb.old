@@ -1,0 +1,25 @@
+<%= form.text_field :title, :id => (@post.new_record?? 'slugify' : nil) %>
+<%= form.text_field :slug, :id => 'slug' %>
+<%= hidden_field_tag :author_id, current_user.id, :name=>"post[author_id]" %>
+<%= form.text_area :excerpt, :data => { :rich_text => true }, :class => 'short' %>
+<%= form.text_area :content, :data => { :rich_text => true } %>
+<%= form.text_field :published_at, :class => 'datetime' %>
+
+<% if defined?(ComfortableMexicanSofa) %>
+  <% content_for :right_column do %>
+    <%= render :partial => 'admin/cms/files/index' %>
+  <% end %>
+  
+  <%= cms_hook :blog_post, :locals => { :form => form } %>
+  
+  <%= form.simple_field nil, nil, :class => 'submit_element' do %>
+    <%= form.check_box :is_published, :disable_builder => true %>
+    <%= form.label :is_published %>
+    <%= form.submit @post.new_record?? 'Create post' : 'Update post', :disable_builder => true %>
+  <% end %>
+  
+<% else %>
+  <%= form.check_box :is_published %>
+  <%= form.submit @post.new_record?? 'Create post' : 'Update post' %>
+<% end %>
+

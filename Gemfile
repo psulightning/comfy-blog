@@ -1,13 +1,15 @@
 source 'http://rubygems.org'
 
-gem 'rails',          '>=3.1.0'
-gem 'rails_autolink', '>=1.0.4'
-gem 'jquery-rails',   '>=1.0.0'
+gemspec
 
-# gem 'will_paginate',  '>=3.0.2'
-# gem 'kaminari',       '>=0.0.0'
+group :development do
+  gem 'awesome_print'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'quiet_assets'
+end
 
 group :test do
   gem 'sqlite3'
-  gem 'jeweler'
+  gem 'coveralls', :require => false
 end
